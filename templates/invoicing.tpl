@@ -394,11 +394,11 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 						  {foreach key=row item=values from=$tcts}
 						  <tr bgcolor="{if $values.invoiced}{$ILcolor}{else}{$nonILcolor}{/if}">
 							<td class="dvtCellLabel"><b>{$values.fecha}</b></td>
-							<td class="dvtCellInfo">{$values.relmod|@getTranslatedString}</td>
-							<td class="dvtCellInfo"><a href="index.php?module={$values.relmod}&action=DetailView&record={$values.cuentaid}">{$values.cuenta}</a></td>
+							<td class="dvtCellInfo">{if isset($values.relmod)}{$values.relmod|@getTranslatedString:$values.relmod}{/if}</td>
+							<td class="dvtCellInfo">{if isset($values.relmod)}<a href="index.php?module={$values.relmod}&action=DetailView&record={$values.cuentaid}">{$values.cuenta}</a>{/if}</td>
 							<td class="dvtCellInfo">{$values.usuario}</td>
 							<td class="dvtCellInfo"><input name="il_{$row}" id="il_{$row}" type="checkbox" value="{$values.tctsid}" {if !$values.invoiceable}disabled=true{/if}>&nbsp;<a href="index.php?module=Timecontrol&action=DetailView&record={$values.tctsid}">{$values.timeelement}</a></td>
-							<td class="dvtCellInfo"><a href="index.php?module={$values.pdomod}&action=DetailView&record={$values.productid}">{$values.product}</a></td>
+							<td class="dvtCellInfo">{if isset($values.pdomod)}<a href="index.php?module={$values.pdomod}&action=DetailView&record={$values.productid}">{$values.product}</a>{/if}</td>
 						  </tr>
 						  {/foreach}
 						   <tr>

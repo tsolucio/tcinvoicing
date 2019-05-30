@@ -70,7 +70,7 @@ $documents=array();
 if (count($tcts)>0) {
 	require_once "modules/$convertto/$convertto.php";
 	$focus= new $convertto();
-  // Obtain the set of different accounts to invoice to
+	// Obtain the set of different accounts to invoice to
 	$setoftrc=implode(',', $tcts);
 	if ($convertto == 'PurchaseOrder') {
 		$relaccounts="
@@ -106,19 +106,19 @@ if (count($tcts)>0) {
 			} else {
 				$focus->column_fields['assigned_user_id'] = $assignto;
 			}
-			$focus->column_fields['bill_street']    = (empty($vnd_focus->column_fields['street']) ? '-' : decode_html($vnd_focus->column_fields['street']));
-			$focus->column_fields['bill_city']  = decode_html($vnd_focus->column_fields['city']);
-			$focus->column_fields['bill_state']   = decode_html($vnd_focus->column_fields['state']);
-			$focus->column_fields['bill_code']    = decode_html($vnd_focus->column_fields['postalcode']);
-			$focus->column_fields['bill_pobox']    = decode_html($vnd_focus->column_fields['pobox']);
-			$focus->column_fields['bill_country']    = decode_html($vnd_focus->column_fields['country']);
+			$focus->column_fields['bill_street'] = (empty($vnd_focus->column_fields['street']) ? '-' : decode_html($vnd_focus->column_fields['street']));
+			$focus->column_fields['bill_city'] = decode_html($vnd_focus->column_fields['city']);
+			$focus->column_fields['bill_state'] = decode_html($vnd_focus->column_fields['state']);
+			$focus->column_fields['bill_code'] = decode_html($vnd_focus->column_fields['postalcode']);
+			$focus->column_fields['bill_pobox'] = decode_html($vnd_focus->column_fields['pobox']);
+			$focus->column_fields['bill_country'] = decode_html($vnd_focus->column_fields['country']);
 
-			$focus->column_fields['ship_street']    = (empty($vnd_focus->column_fields['street']) ? '-' : decode_html($vnd_focus->column_fields['street']));
-			$focus->column_fields['ship_city']  = decode_html($vnd_focus->column_fields['city']);
-			$focus->column_fields['ship_state']   = decode_html($vnd_focus->column_fields['state']);
-			$focus->column_fields['ship_code']    = decode_html($vnd_focus->column_fields['postalcode']);
-			$focus->column_fields['ship_pobox']    = decode_html($vnd_focus->column_fields['pobox']);
-			$focus->column_fields['ship_country']    = decode_html($vnd_focus->column_fields['country']);
+			$focus->column_fields['ship_street'] = (empty($vnd_focus->column_fields['street']) ? '-' : decode_html($vnd_focus->column_fields['street']));
+			$focus->column_fields['ship_city'] = decode_html($vnd_focus->column_fields['city']);
+			$focus->column_fields['ship_state'] = decode_html($vnd_focus->column_fields['state']);
+			$focus->column_fields['ship_code'] = decode_html($vnd_focus->column_fields['postalcode']);
+			$focus->column_fields['ship_pobox'] = decode_html($vnd_focus->column_fields['pobox']);
+			$focus->column_fields['ship_country'] = decode_html($vnd_focus->column_fields['country']);
 			$focus->mode = ''; // Creating
 			// Lines
 			$qcond = "FROM vtiger_timecontrol tc ";
@@ -160,8 +160,9 @@ if (count($tcts)>0) {
 						$_REQUEST['comment'.$i]=$fecha->getDisplayDate().' - '.decode_html($tcdesc);
 						break;
 					case 2:  // Related Entity
-						$recom=getEntityName(getSalesEntityType($tc['relatedto']), $tc['relatedto']);
-						$_REQUEST['comment'.$i]=$recom;
+						if (isset($tc['relatedto'])) {
+							$_REQUEST['comment'.$i]= getEntityName(getSalesEntityType($tc['relatedto']), $tc['relatedto']);
+						}
 						break;
 				}
 				if ($invoiceper==0) { // Time
@@ -361,7 +362,7 @@ if (count($tcts)>0) {
 				$ct_focus = new Contacts();
 				$ct_focus->retrieve_entity_info($contactid, 'Contacts');
 
-				  $focus->column_fields['bill_city']    = decode_html($ct_focus->column_fields['mailingcity']);
+				$focus->column_fields['bill_city']    = decode_html($ct_focus->column_fields['mailingcity']);
 				$focus->column_fields['bill_street']  = decode_html($ct_focus->column_fields['mailingstreet']);
 				$focus->column_fields['bill_state']   = decode_html($ct_focus->column_fields['mailingstate']);
 				$focus->column_fields['bill_code']    = decode_html($ct_focus->column_fields['mailingzip']);
@@ -395,7 +396,7 @@ if (count($tcts)>0) {
 			}
 			$focus->column_fields['terms_conditions'] = decode_html(getTermsandConditions($convertto));
 			$focus->mode = ''; // Creating
-		  // Lines
+			// Lines
 			$qcond = "FROM vtiger_timecontrol tc ";
 			$qcond .= "INNER JOIN vtiger_crmentity ce ON tc.timecontrolid = ce.crmid ";
 			if (in_array('Contacts', $toinvoice)) {
@@ -463,7 +464,7 @@ if (count($tcts)>0) {
 			if (in_array('Project', $toinvoice)) {
 				$qcond .= "or pr.linktoaccountscontacts = $accountid or prct.accountid=$accountid ";
 			}
-			$qcond .= ")";
+			$qcond .= ')';
 			switch ($tcgrouping) {
 				case 0: // None. Each TRC will be an individual product line
 					$qtcond = "SELECT tc.product_id, time_to_sec(totaltime) as wtsecs, tcunits as totalunits, ce.description, date_start $qcond";
@@ -482,7 +483,7 @@ if (count($tcts)>0) {
 			$subtotal = 0;
 			$i=1;
 			$totalwithtax = 0;
-		  // Product lines
+			// Product lines
 			while ($tc=$adb->fetch_array($tcs)) {
 				$_REQUEST['hdnProductId'.$i]=$tc['product_id'];
 				switch ($productdesc) {
@@ -498,12 +499,17 @@ if (count($tcts)>0) {
 						$_REQUEST['comment'.$i]=$fecha->getDisplayDate().' - '.decode_html($tcdesc);
 						break;
 					case 2:  // Related Entity
-						$recom=getEntityName(getSalesEntityType($tc['relatedto']), $tc['relatedto']);
-						$_REQUEST['comment'.$i]=$recom;
+						if (isset($tc['relatedto'])) {
+							$_REQUEST['comment'.$i] = getEntityName(getSalesEntityType($tc['relatedto']), $tc['relatedto']);
+						}
 						break;
 				}
 				if ($invoiceper==0) { // Time
-					$qty = round($tc['wtsecs']/3600, 2);
+					if (is_numeric($tc['wtsecs'])) {
+						$qty = round($tc['wtsecs']/3600, 2);
+					} else {
+						$qty = 0;
+					}
 				} elseif ($invoiceper==1) { // Units
 					$qty = $tc['totalunits'];
 				} else { //Both
@@ -546,22 +552,22 @@ if (count($tcts)>0) {
 				$all_available_taxes = getAllTaxes('available', '');
 				$tax_val = 0;
 				for ($tax_count=0; $tax_count<count($all_available_taxes); $tax_count++) {
-					  $tax_val += $all_available_taxes[$tax_count]['percentage'];
+					$tax_val += $all_available_taxes[$tax_count]['percentage'];
 				}
 				$_REQUEST['total']=round($subtotal+($subtotal*$tax_val/100), 2);
 			}
 			// ADJUSTMENT TYPE FOR DUSS.
-	  //      $ld=substr($_REQUEST['total'],-1);
-	  //  if ($ld<5) {
-	  //      $adj="0.0$ld";
-	  //      $d=0;
-	  //  } else {
-	  //      $adj="0.0".($ld-5);
-	  //      $d=5;
-	  //  }
-	  //  $_REQUEST['total']=$_REQUEST['total']-$adj;
-	  //  $_REQUEST['adjustment']=$adj;
-	  //  $_REQUEST['adjustmentType']='-';
+			//      $ld=substr($_REQUEST['total'],-1);
+			//  if ($ld<5) {
+			//      $adj="0.0$ld";
+			//      $d=0;
+			//  } else {
+			//      $adj="0.0".($ld-5);
+			//      $d=5;
+			//  }
+			//  $_REQUEST['total']=$_REQUEST['total']-$adj;
+			//  $_REQUEST['adjustment']=$adj;
+			//  $_REQUEST['adjustmentType']='-';
 			if ($convertto == 'Invoice') {
 				$focus->column_fields['related_to'] = $_REQUEST['tcinv_origin'];
 			}
