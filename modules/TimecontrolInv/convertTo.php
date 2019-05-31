@@ -569,7 +569,7 @@ if (count($tcts)>0) {
 			//  $_REQUEST['adjustment']=$adj;
 			//  $_REQUEST['adjustmentType']='-';
 			if ($convertto == 'Invoice') {
-				$focus->column_fields['related_to'] = $_REQUEST['tcinv_origin'];
+				$focus->column_fields['related_to'] = isset($_REQUEST['tcinv_origin']) ? $_REQUEST['tcinv_origin'] : '';
 			}
 			$focus->save($convertto);
 			if ($convertto=="Issuecards" && $focus->id > 0) {
