@@ -27,26 +27,26 @@ global $adb, $app_strings, $current_user;
 // check for new column datespan
 $result = $adb->pquery('show columns from trcinvoicing like ?', array('datespan'));
 if (!($adb->num_rows($result))) {
-	$adb->pquery("ALTER TABLE trcinvoicing ADD datespan VARCHAR(100)", array());
+    $adb->pquery("ALTER TABLE trcinvoicing ADD datespan VARCHAR(100)", array());
 }
 
 if (isset($_REQUEST['invoiceper']) &&
-	isset($_REQUEST['tcgrouping']) &&
-	isset($_REQUEST['taxmode']) &&
-	isset($_REQUEST['assignto']) &&
-	isset($_REQUEST['pdodesc'])
+    isset($_REQUEST['tcgrouping']) &&
+    isset($_REQUEST['taxmode']) &&
+    isset($_REQUEST['assignto']) &&
+    isset($_REQUEST['pdodesc'])
 ) {
-	if (!empty($_REQUEST['toinvoice']) && is_array($_REQUEST['toinvoice'])) {
-		$toinvoice=implode('##', $_REQUEST['toinvoice']);
-	} else {
-		$toinvoice = '';
-	}
-	$adb->pquery(
-		'update trcinvoicing set invoiceper=?,taxmode=?,tcgrouping=?,productdesc=?,invmodules=?,assignto=?,rel2contact=?,bill2contact=?,tcsubject=?,datespan=?',
-		array($_REQUEST['invoiceper'], $_REQUEST['taxmode'], $_REQUEST['tcgrouping'], $_REQUEST['pdodesc'], $toinvoice, $_REQUEST['assignto'],
-			empty($_REQUEST['rel2contact']) ? '' : $_REQUEST['rel2contact'], empty($_REQUEST['bill2contact']) ? '' : $_REQUEST['bill2contact'],
-			$_REQUEST['tcsubject'], $_REQUEST['datespan'])
-	);
+    if (!empty($_REQUEST['toinvoice']) && is_array($_REQUEST['toinvoice'])) {
+        $toinvoice=implode('##', $_REQUEST['toinvoice']);
+    } else {
+        $toinvoice = '';
+    }
+    $adb->pquery(
+        'update trcinvoicing set invoiceper=?,taxmode=?,tcgrouping=?,productdesc=?,invmodules=?,assignto=?,rel2contact=?,bill2contact=?,tcsubject=?,datespan=?',
+        array($_REQUEST['invoiceper'], $_REQUEST['taxmode'], $_REQUEST['tcgrouping'], $_REQUEST['pdodesc'], $toinvoice, $_REQUEST['assignto'],
+            empty($_REQUEST['rel2contact']) ? '' : $_REQUEST['rel2contact'], empty($_REQUEST['bill2contact']) ? '' : $_REQUEST['bill2contact'],
+            $_REQUEST['tcsubject'], $_REQUEST['datespan'])
+    );
 }
 
 $invprmrs=$adb->query('select * from trcinvoicing');
@@ -63,28 +63,28 @@ $toinvoice=explode('##', $adb->query_result($invprmrs, 0, 'invmodules'));
 // If we are coming from HelpDesk/Project with ttid to invoice we activate that module
 $setype = '';
 if (!empty($_REQUEST['onlyttid'])) {
-	$setype = getSalesEntityType($_REQUEST['onlyttid']);
-	if (!in_array($setype, $toinvoice)) {
-		$toinvoice[]=$setype;
-		if ($setype!='HelpDesk') {
-			if (!in_array('ProjectTask', $toinvoice)) {
-				$toinvoice[]='ProjectTask';
-			}
-			if (!in_array('ProjectMilestone', $toinvoice)) {
-				$toinvoice[]='ProjectMilestone';
-			}
-		}
-	}
+    $setype = getSalesEntityType($_REQUEST['onlyttid']);
+    if (!in_array($setype, $toinvoice)) {
+        $toinvoice[]=$setype;
+        if ($setype!='HelpDesk') {
+            if (!in_array('ProjectTask', $toinvoice)) {
+                $toinvoice[]='ProjectTask';
+            }
+            if (!in_array('ProjectMilestone', $toinvoice)) {
+                $toinvoice[]='ProjectMilestone';
+            }
+        }
+    }
 }
 if (!empty($_REQUEST['onlyttid'])) {
-	// all Timecontrol records since createdtime of TT to today
-	$ttctime=$adb->getOne('select DATE_FORMAT(createdtime,\'%Y-%m-%d\') from vtiger_crmentity where crmid='.$_REQUEST['onlyttid']);
-	$date = new DateTimeField($ttctime);
-	$_REQUEST["start_date"] = $date->getDisplayDate($current_user); // createdtime
-	$date = new DateTimeField(date('Y-m-d'));
-	$_REQUEST["end_date"] = $date->getDisplayDate($current_user);  // today
-	// Timecontrol for all users
-	$_REQUEST["assigned_user_id"]='0';
+    // all Timecontrol records since createdtime of TT to today
+    $ttctime=$adb->getOne('select DATE_FORMAT(createdtime,\'%Y-%m-%d\') from vtiger_crmentity where crmid='.$_REQUEST['onlyttid']);
+    $date = new DateTimeField($ttctime);
+    $_REQUEST["start_date"] = $date->getDisplayDate($current_user); // createdtime
+    $date = new DateTimeField(date('Y-m-d'));
+    $_REQUEST["end_date"] = $date->getDisplayDate($current_user);  // today
+    // Timecontrol for all users
+    $_REQUEST["assigned_user_id"]='0';
 }
 $smarty->assign('selinvoicetime', ($invoiceper==0 ? 'selected' : ''));
 $smarty->assign('selinvoiceunit', ($invoiceper==1 ? 'selected' : ''));
@@ -105,24 +105,24 @@ $smarty->assign('tcsubject', $tcsubject);
 //Check if invoice_ref exist in vtiger_contactdetails
 $repcols=$adb->getColumnNames('vtiger_contactdetails');
 if (in_array('invoice_ref', $repcols)) {
-	$smarty->assign('rel2contact', ($rel2contact !=null ? 'checked' : ''));
-	$smarty->assign('bill2contact', ($bill2contact !=null ? 'checked' : ''));
+    $smarty->assign('rel2contact', ($rel2contact !=null ? 'checked' : ''));
+    $smarty->assign('bill2contact', ($bill2contact !=null ? 'checked' : ''));
 } else {
-	$smarty->assign('rel2contact', 'no');
-	$smarty->assign('bill2contact', 'no');
+    $smarty->assign('rel2contact', 'no');
+    $smarty->assign('bill2contact', 'no');
 }
 $invModules=  array (
-	'Contacts' => getTranslatedString('Contacts', 'Contacts'),
-	'Accounts' => getTranslatedString('Accounts', 'Accounts'),
-	'Vendors' => getTranslatedString('Vendors', 'Vendors'),
-	'HelpDesk' => getTranslatedString('HelpDesk', 'HelpDesk'),
-	'Project' => getTranslatedString('Project', 'Project'),
-	'ProjectTask' => getTranslatedString('ProjectTask', 'ProjectTask'),
-	'ProjectMilestone' => getTranslatedString('ProjectMilestone', 'ProjectMilestone'),
-	'Quotes' => getTranslatedString('Quotes', 'Quotes'),
-	'SalesOrder' => getTranslatedString('SalesOrder', 'SalesOrder'),
-	'Invoice' => getTranslatedString('Invoice', 'Invoice'),
-	'Potentials' => getTranslatedString('Potentials', 'Potentials'),
+    'Contacts' => getTranslatedString('Contacts', 'Contacts'),
+    'Accounts' => getTranslatedString('Accounts', 'Accounts'),
+    'Vendors' => getTranslatedString('Vendors', 'Vendors'),
+    'HelpDesk' => getTranslatedString('HelpDesk', 'HelpDesk'),
+    'Project' => getTranslatedString('Project', 'Project'),
+    'ProjectTask' => getTranslatedString('ProjectTask', 'ProjectTask'),
+    'ProjectMilestone' => getTranslatedString('ProjectMilestone', 'ProjectMilestone'),
+    'Quotes' => getTranslatedString('Quotes', 'Quotes'),
+    'SalesOrder' => getTranslatedString('SalesOrder', 'SalesOrder'),
+    'Invoice' => getTranslatedString('Invoice', 'Invoice'),
+    'Potentials' => getTranslatedString('Potentials', 'Potentials'),
 );
 $smarty->assign('invModules', $invModules);
 $smarty->assign('invMSelect', $toinvoice);
@@ -152,49 +152,49 @@ $starttime = 0;
 $endtime = 0;
 
 if ($startdate == "") {
-	switch ($datespan) {
-		case 'thismonth':
-			$starttime = mktime(0, 0, 0, date("m"), "01", date("Y"));
-			break;
-		case 'lastmonth':
-			$starttime = mktime(0, 0, 0, date("m")-1, "01", date("Y"));
-			break;
-		case 'lastweek':
-			$starttime = (date('w')==1 ? strtotime("last monday") : strtotime("-1 week monday"));
-			break;
-		default: // this week
-			$starttime = (date('w')==1 ? strtotime("today") : strtotime("last monday"));
-			break;
-	}
-	$date = new DateTimeField(date('Y-m-d', $starttime));
-	$startdate = $date->getDisplayDate($current_user);
+    switch ($datespan) {
+        case 'thismonth':
+            $starttime = mktime(0, 0, 0, date("m"), "01", date("Y"));
+            break;
+        case 'lastmonth':
+            $starttime = mktime(0, 0, 0, date("m")-1, "01", date("Y"));
+            break;
+        case 'lastweek':
+            $starttime = (date('w')==1 ? strtotime("last monday") : strtotime("-1 week monday"));
+            break;
+        default: // this week
+            $starttime = (date('w')==1 ? strtotime("today") : strtotime("last monday"));
+            break;
+    }
+    $date = new DateTimeField(date('Y-m-d', $starttime));
+    $startdate = $date->getDisplayDate($current_user);
 } else {
-	list($y,$m,$d)=explode('-', getValidDBInsertDateValue($startdate));
-	$starttime = mktime(0, 0, 0, $m, $d, $y);
+    list($y,$m,$d)=explode('-', getValidDBInsertDateValue($startdate));
+    $starttime = mktime(0, 0, 0, $m, $d, $y);
 }
 if ($enddate == "") {
-	switch ($datespan) {
-		case 'thismonth':
-			$endtime = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
-			break;
-		case 'lastmonth':
-			$endtime = mktime(0, 0, 0, date("m")-1, date("t", strtotime("last month")), date("Y"));
-			break;
-		case 'lastweek':
-			$endtime = (date('w')==0 ? strtotime("last sunday") : strtotime("-1 week sunday"));
-			break;
-		default: // this week
-			$endtime = (date('w')==0 ? strtotime("today") : strtotime("next sunday"));
-			break;
-	}
-	$date = new DateTimeField(date('Y-m-d', $endtime));
-	$enddate = $date->getDisplayDate($current_user);
+    switch ($datespan) {
+        case 'thismonth':
+            $endtime = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
+            break;
+        case 'lastmonth':
+            $endtime = mktime(0, 0, 0, date("m")-1, date("t", strtotime("last month")), date("Y"));
+            break;
+        case 'lastweek':
+            $endtime = (date('w')==0 ? strtotime("last sunday") : strtotime("-1 week sunday"));
+            break;
+        default: // this week
+            $endtime = (date('w')==0 ? strtotime("today") : strtotime("next sunday"));
+            break;
+    }
+    $date = new DateTimeField(date('Y-m-d', $endtime));
+    $enddate = $date->getDisplayDate($current_user);
 } else {
-	list($y,$m,$d)=explode('-', getValidDBInsertDateValue($enddate));
-	$endtime = mktime(0, 0, 0, $m, $d, $y);
+    list($y,$m,$d)=explode('-', getValidDBInsertDateValue($enddate));
+    $endtime = mktime(0, 0, 0, $m, $d, $y);
 }
 if ($userid == "" || !preg_match("/^[0-9]+$/", $userid)) {
-	$userid = $current_user->id;
+    $userid = $current_user->id;
 }
 
 $query="select * from vtiger_users where deleted=0";
@@ -203,10 +203,10 @@ $num_rows=$adb->num_rows($result);
 $user_details=array(0=>array(getTranslatedString('SHOW_ALL')=>''));
 $assignedto_details=array(0=>array(getTranslatedString('AccountUser', 'Timecontrol')=>''));
 for ($i=0; $i<$num_rows; $i++) {
-	$user=$adb->query_result($result, $i, 'id');
-	$username=getUserFullName($user).' ('.$adb->query_result($result, $i, 'user_name').')';
-	$user_details[$user]=array($username=>($userid==$user ? 'selected' : ''));
-	$assignedto_details[$user]=array($username=>($assignto==$user ? 'selected' : ''));
+    $user=$adb->query_result($result, $i, 'id');
+    $username=getUserFullName($user).' ('.$adb->query_result($result, $i, 'user_name').')';
+    $user_details[$user]=array($username=>($userid==$user ? 'selected' : ''));
+    $assignedto_details[$user]=array($username=>($assignto==$user ? 'selected' : ''));
 }
 
 $query  = "SELECT tc.*, u.id, ce.description ";
@@ -217,160 +217,198 @@ $qcond .= "LEFT JOIN vtiger_account a ON a.accountid = tc.relatedto ";
 $qcond .= "LEFT JOIN vtiger_contactdetails c ON c.contactid = tc.relatedto ";
 $qcond .= "LEFT JOIN vtiger_vendor ON vtiger_vendor.vendorid = tc.relatedto ";
 if (in_array('HelpDesk', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_troubletickets tt ON tt.ticketid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_troubletickets tt ON tt.ticketid = tc.relatedto ";
 }
 if (in_array('Quotes', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_quotes qt ON qt.quoteid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_quotes qt ON qt.quoteid = tc.relatedto ";
 }
 if (in_array('SalesOrder', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_salesorder so ON so.salesorderid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_salesorder so ON so.salesorderid = tc.relatedto ";
 }
 if (in_array('Invoice', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_invoice iv ON iv.invoiceid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_invoice iv ON iv.invoiceid = tc.relatedto ";
 }
 if (in_array('Potentials', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_potential pt ON pt.potentialid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_potential pt ON pt.potentialid = tc.relatedto ";
 }
 if (in_array('Project', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_project pr ON pr.projectid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_project pr ON pr.projectid = tc.relatedto ";
 }
 if (in_array('ProjectTask', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_projecttask prt ON prt.projecttaskid = tc.relatedto ";
-	$qcond .= "LEFT JOIN vtiger_project pr_pt ON pr_pt.projectid = prt.projectid ";
+    $qcond .= "LEFT JOIN vtiger_projecttask prt ON prt.projecttaskid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_project pr_pt ON pr_pt.projectid = prt.projectid ";
 }
 if (in_array('ProjectMilestone', $toinvoice)) {
-	$qcond .= "LEFT JOIN vtiger_projectmilestone prm ON prm.projectmilestoneid = tc.relatedto ";
-	$qcond .= "LEFT JOIN vtiger_project pr_pm ON pr_pm.projectid = prm.projectid ";
+    $qcond .= "LEFT JOIN vtiger_projectmilestone prm ON prm.projectmilestoneid = tc.relatedto ";
+    $qcond .= "LEFT JOIN vtiger_project pr_pm ON pr_pm.projectid = prm.projectid ";
 }
 $qcond .= "WHERE ce.deleted = 0 ";
 $qcond .= "AND tc.date_start between '".date("Y-m-d", $starttime)."' and '".date("Y-m-d", $endtime)."' ";
 if ($userid > 0) {
-	$qcond .= " AND ce.smownerid = '".$userid."' ";
+    $qcond .= " AND ce.smownerid = '".$userid."' ";
 }
 if (!empty($parentid)) {
-	if ($parent == 'Accounts') {
-		$qcond .= " AND (a.accountid = '$parentid' or a.accountname='$parent_display' or c.accountid=$parentid ";
-		if (in_array('HelpDesk', $toinvoice)) {
-			$qcond .= "or tt.parent_id=$parentid ";
-		}
-		if (in_array('Quotes', $toinvoice)) {
-			$qcond .= "or qt.accountid=$parentid ";
-		}
-		if (in_array('SalesOrder', $toinvoice)) {
-			$qcond .= "or so.accountid=$parentid ";
-		}
-		if (in_array('Invoice', $toinvoice)) {
-			$qcond .= "or iv.accountid=$parentid ";
-		}
-		if (in_array('Potentials', $toinvoice)) {
-			$qcond .= "or pt.related_to=$parentid ";
-		}
-		if (in_array('Project', $toinvoice)) {
-			$qcond .= "or pr.linktoaccountscontacts=$parentid ";
-		}
-		if (in_array('ProjectTask', $toinvoice)) {
-			$qcond .= "or pr_pt.linktoaccountscontacts=$parentid ";
-		}
-		if (in_array('ProjectMilestone', $toinvoice)) {
-			$qcond .= "or pr_pm.linktoaccountscontacts=$parentid ";
-		}
-		$qcond .= ') ';
-	} elseif ($parent == 'Vendors') {
-		$qcond .= " AND (vtiger_vendor.vendorid = '$parentid' or vtiger_vendor.vendorname='$parent_display') ";
-	} else {
-		$qcond .= " AND (c.contactid = '$parentid' or c.lastname='$parent_display' ";
-		if (in_array('HelpDesk', $toinvoice)) {
-			$qcond .= "or tt.parent_id=$parentid ";
-		}
-		if (in_array('Quotes', $toinvoice)) {
-			$qcond .= "or qt.contactid=$parentid ";
-		}
-		if (in_array('SalesOrder', $toinvoice)) {
-			$qcond .= "or so.contactid=$parentid ";
-		}
-		if (in_array('Invoice', $toinvoice)) {
-			$qcond .= "or iv.contactid=$parentid ";
-		}
-		if (in_array('Potentials', $toinvoice)) {
-			$qcond .= "or pt.related_to=$parentid ";
-		}
-		if (in_array('Project', $toinvoice)) {
-			$qcond .= "or pr.linktoaccountscontacts=$parentid ";
-		}
-		if (in_array('ProjectTask', $toinvoice)) {
-			$qcond .= "or pr_pt.linktoaccountscontacts=$parentid ";
-		}
-		if (in_array('ProjectMilestone', $toinvoice)) {
-			$qcond .= "or pr_pm.linktoaccountscontacts=$parentid ";
-		}
-		$qcond .= ') ';
-	}
+    if ($parent == 'Accounts') {
+        $qcond .= " AND (a.accountid = '$parentid' or a.accountname='$parent_display' or c.accountid=$parentid ";
+        if (in_array('HelpDesk', $toinvoice)) {
+            $qcond .= "or tt.parent_id=$parentid ";
+        }
+        if (in_array('Quotes', $toinvoice)) {
+            $qcond .= "or qt.accountid=$parentid ";
+        }
+        if (in_array('SalesOrder', $toinvoice)) {
+            $qcond .= "or so.accountid=$parentid ";
+        }
+        if (in_array('Invoice', $toinvoice)) {
+            $qcond .= "or iv.accountid=$parentid ";
+        }
+        if (in_array('Potentials', $toinvoice)) {
+            $qcond .= "or pt.related_to=$parentid ";
+        }
+        if (in_array('Project', $toinvoice)) {
+            $qcond .= "or pr.linktoaccountscontacts=$parentid ";
+        }
+        if (in_array('ProjectTask', $toinvoice)) {
+            $qcond .= "or pr_pt.linktoaccountscontacts=$parentid ";
+        }
+        if (in_array('ProjectMilestone', $toinvoice)) {
+            $qcond .= "or pr_pm.linktoaccountscontacts=$parentid ";
+        }
+        $qcond .= ') ';
+    } elseif ($parent == 'Vendors') {
+        $qcond .= " AND (vtiger_vendor.vendorid = '$parentid' or vtiger_vendor.vendorname='$parent_display') ";
+    } else {
+        $qcond .= " AND (c.contactid = '$parentid' or c.lastname='$parent_display' ";
+        if (in_array('HelpDesk', $toinvoice)) {
+            $qcond .= "or tt.parent_id=$parentid ";
+        }
+        if (in_array('Quotes', $toinvoice)) {
+            $qcond .= "or qt.contactid=$parentid ";
+        }
+        if (in_array('SalesOrder', $toinvoice)) {
+            $qcond .= "or so.contactid=$parentid ";
+        }
+        if (in_array('Invoice', $toinvoice)) {
+            $qcond .= "or iv.contactid=$parentid ";
+        }
+        if (in_array('Potentials', $toinvoice)) {
+            $qcond .= "or pt.related_to=$parentid ";
+        }
+        if (in_array('Project', $toinvoice)) {
+            $qcond .= "or pr.linktoaccountscontacts=$parentid ";
+        }
+        if (in_array('ProjectTask', $toinvoice)) {
+            $qcond .= "or pr_pt.linktoaccountscontacts=$parentid ";
+        }
+        if (in_array('ProjectMilestone', $toinvoice)) {
+            $qcond .= "or pr_pm.linktoaccountscontacts=$parentid ";
+        }
+        $qcond .= ') ';
+    }
 }
 if ($invoiced==0) {
-	$qcond .= " AND (tc.invoiced=0 or tc.invoiced is null) ";
+    $qcond .= " AND (tc.invoiced=0 or tc.invoiced is null) ";
 } elseif ($invoiced==1) {
-	$qcond .= " AND tc.invoiced=1 ";
+    $qcond .= " AND tc.invoiced=1 ";
 }
 // Invoice only this ticketid
 if ($setype == 'HelpDesk' && !empty($_REQUEST['onlyttid'])) {
-	$qcond .= " AND tt.ticketid=".$_REQUEST['onlyttid'];
+    $qcond .= " AND tt.ticketid=".$_REQUEST['onlyttid'];
 }
 if ($setype == 'Project' && !empty($_REQUEST['onlyttid'])) {
-	$qcond .= " AND (pr.projectid=".$_REQUEST['onlyttid'].' or prm.projectid='.$_REQUEST['onlyttid'].' or prt.projectid='.$_REQUEST['onlyttid'].')';
+    $qcond .= " AND (pr.projectid=".$_REQUEST['onlyttid'].' or prm.projectid='.$_REQUEST['onlyttid'].' or prt.projectid='.$_REQUEST['onlyttid'].')';
 }
 $query .= $qcond." ORDER BY date_start,accountname,c.lastname,c.firstname,u.last_name,u.first_name,vtiger_vendor.vendorname";
 $result = $adb->query($query);
 $total = 0;
 $tcts = array();
 while ($result && ($row = $adb->fetch_array($result))) {
-	//$invoiceable = (!is_null($row['accountid']) || !is_null($row['contactid']) || !is_null($row['ticketid'])) && $row['product_id']!=0 && $row['totaltime']!='';
-	$relmod=getSalesEntityType($row['relatedto']);
-	$invoiceable = in_array($relmod, $toinvoice) && $row['product_id']!=0 && ($row['totaltime']!='' || $row['tcunits'] > 0);
-	if ($showinvchecked && !$invoiceable) {
-		continue;
-	}
-	$dt = $row['date_end'];
-	$te = $row['time_end'];
-	$time_end = DateTimeField::convertToUserTimeZone($dt.' '.DateTimeField::sanitizeTime($te));
-	$time_end = $time_end->format('H:i:s');
-	$dt = $row['date_start'];
-	$ts = $row['time_start'];
-	$time_start = DateTimeField::convertToUserTimeZone($dt.' '.DateTimeField::sanitizeTime($ts));
-	$time_start = $time_start->format('H:i:s');
-	$date = new DateTimeField($row['date_start']);
-	$data = array(
-		'invoiceable' => $invoiceable,
-		'invoiced' => $row['invoiced'],
-		'fecha' => $date->getDisplayDate($current_user),
-		'cuentaid' => $row['relatedto'],
-		'usuario' => getUserFullName($row['id']),
-		'tctsid' => $row['timecontrolid'],
-		'timeelement' => $time_start.' - '.$time_end.'='.$row['totaltime'].' / '.$row['tcunits'],
-	);
-	if ($row['product_id']) {
-		$pdomod=getSalesEntityType($row['product_id']);
-		$prod=getEntityName($pdomod, array($row['product_id']));
-		$data['productid'] = $row['product_id'];
-		$data['pdomod'] = $pdomod;
-		$data['product'] = $prod[$row['product_id']];
-	}
-	if ($row['relatedto']) {
-		$isdel=$adb->getone('select deleted from vtiger_crmentity where crmid='.$row['relatedto']);
-		if ($isdel) {
-			$ename='<font color=red>DELETED!!!</font>';
-		} else {
-			$seqfld=getModuleSequenceField($relmod);
-			$relm = CRMEntity::getInstance($relmod);
-			$relm->retrieve_entity_info($row['relatedto'], $relmod);
-			$enum=$relm->column_fields[$seqfld['column']];
-			$ename=getEntityName($relmod, array($row['relatedto']));
-			$ename=$ename[$row['relatedto']];
-		}
-		$data['relmod'] = $relmod;
-		$data['cuenta'] = $ename;
-	}
-	$tcts[] = $data;
+    //$invoiceable = (!is_null($row['accountid']) || !is_null($row['contactid']) || !is_null($row['ticketid'])) && $row['product_id']!=0 && $row['totaltime']!='';
+    $relmod=getSalesEntityType($row['relatedto']);
+    $invoiceable = in_array($relmod, $toinvoice) && $row['product_id']!=0 && ($row['totaltime']!='' || $row['tcunits'] > 0);
+    if ($showinvchecked && !$invoiceable) {
+        continue;
+    }
+    $dt = $row['date_end'];
+    $te = $row['time_end'];
+    $time_end = DateTimeField::convertToUserTimeZone($dt.' '.DateTimeField::sanitizeTime($te));
+    $time_end = $time_end->format('H:i:s');
+    $dt = $row['date_start'];
+    $ts = $row['time_start'];
+    $time_start = DateTimeField::convertToUserTimeZone($dt.' '.DateTimeField::sanitizeTime($ts));
+    $time_start = $time_start->format('H:i:s');
+    $date = new DateTimeField($row['date_start']);
+    $data = array(
+        'invoiceable' => $invoiceable,
+        'invoiced' => $row['invoiced'],
+        'fecha' => $date->getDisplayDate($current_user),
+        'cuentaid' => $row['relatedto'],
+        'usuario' => getUserFullName($row['id']),
+        'tctsid' => $row['timecontrolid'],
+        'timeelement' => $time_start.' - '.$time_end.'='.$row['totaltime'].' / '.$row['tcunits'],
+    );
+    if ($row['product_id']) {
+        $pdomod=getSalesEntityType($row['product_id']);
+        $prod=getEntityName($pdomod, array($row['product_id']));
+        $data['productid'] = $row['product_id'];
+        $data['pdomod'] = $pdomod;
+        $data['product'] = $prod[$row['product_id']];
+    }
+    if ($row['relatedto']) {
+        $isdel=$adb->getone('select deleted from vtiger_crmentity where crmid='.$row['relatedto']);
+        if ($isdel) {
+            $ename='<font color=red>DELETED!!!</font>';
+        } else {
+            $seqfld=getModuleSequenceField($relmod);
+            $relm = CRMEntity::getInstance($relmod);
+            $relm->retrieve_entity_info($row['relatedto'], $relmod);
+            $enum=$relm->column_fields[$seqfld['column']];
+            $ename=getEntityName($relmod, array($row['relatedto']));
+            $ename=$ename[$row['relatedto']];
+        }
+        $data['relmod'] = $relmod;
+        $data['cuenta'] = $ename;
+    }
+    $tcts[] = $data;
 }
+
+// MajorLabel: Include Transaction (CobroPago) records that meet criteria set in
+// Global variables. Currently only for LitigationMatters
+if ($setype === 'LitigationMatter') {
+    $retainer_cat = GlobalVariable::getVariable('TCInv_Retainer_Transactions_Category', 'Retainer');
+    $advance_cat = GlobalVariable::getVariable('TCInv_Advance_Transactions_Category', 'Advance');
+    $r = $adb->pquery("SELECT CASE 
+                       WHEN vtiger_account.accountid != '' THEN vtiger_account.accountname 
+                       WHEN vtiger_contactdetails.contactid != '' THEN CONCAT(vtiger_contactdetails.firstname, ' ', vtiger_contactdetails.lastname) 
+                       WHEN vtiger_vendor.vendorid != '' THEN vtiger_vendor.vendorname 
+                       WHEN vtiger_leaddetails.leadid != '' THEN CONCAT(vtiger_leaddetails.firstname, ' ', vtiger_leaddetails.lastname) 
+                       END AS parentname, vtiger_cobropago.* FROM vtiger_cobropago 
+                       LEFT JOIN vtiger_account ON vtiger_cobropago.parent_id=vtiger_account.accountid 
+                       LEFT JOIN vtiger_contactdetails ON vtiger_cobropago.parent_id=vtiger_contactdetails.contactid 
+                       LEFT JOIN vtiger_vendor ON vtiger_cobropago.parent_id=vtiger_vendor.vendorid 
+                       LEFT JOIN vtiger_leaddetails ON vtiger_cobropago.parent_id=vtiger_leaddetails.leadid 
+                       WHERE vtiger_cobropago.related_id = ?", array($_REQUEST['onlyttid']));
+
+    $tarecords = array();
+    $tarecords['retainers'] = array();
+    $tarecords['advances'] = array();
+
+    while ($ta = $adb->fetch_array($r)) {
+        // Convert payment date and amount to user format
+        $date = new DateTimeField($ta['paymentdate']);
+        $ta['paymentdate_uf'] = $date->getDisplayDate($current_user);
+        $ta['amount_uf'] = CurrencyField::convertToUserFormat($ta['amount'], $current_user);
+        // Get the setype of the parent_id to build the link in template
+        $ta['parent_setype'] = getSalesEntityType($ta['parent_id']);
+        // Add the transaction to the appropriate subcategory
+        if ($ta['paymentcategory'] == $retainer_cat && $ta['productservice_id'] != 0) {
+            $tarecords['retainers'][] = $ta;
+        } else if ($ta['paymentcategory'] == $advance_cat && $ta['productservice_id'] != 0) {
+            $tarecords['advances'][] = $ta;
+        }
+    }
+}
+// End MajorLabel addition
 
 $smarty->assign('MODULE', $currentModule);
 $smarty->assign('SINGLE_MOD', getTranslatedString('SINGLE_'.$currentModule));
@@ -395,6 +433,7 @@ $smarty->assign('nonILcolor', '#ffdbdb');
 $smarty->assign('tcts', $tcts);
 $smarty->assign('totalrows', count($tcts));
 $smarty->assign('tcinv_origin', !empty($_REQUEST['onlyttid']) ? $_REQUEST['onlyttid'] : '');
+$smarty->assign('tarecords', $tarecords);
 
 $smarty->display("modules/TimecontrolInv/invoicing.tpl");
 ?>

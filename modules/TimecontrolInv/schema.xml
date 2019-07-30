@@ -1,0 +1,28 @@
+<?xml version='1.0'?>
+<schema>
+	<tables>
+		<table>
+			<name>trcinvoicing</name>
+			<sql><![CDATA[
+                  CREATE TABLE trcinvoicing (
+                  invoiceper SMALLINT NOT NULL ,
+                  taxmode SMALLINT NOT NULL ,
+                  tcgrouping SMALLINT NOT NULL ,
+                  productdesc SMALLINT NOT NULL,
+                  invmodules VARCHAR( 250 ) NULL,
+                  assignto INT NOT NULL,
+                  rel2contact VARCHAR( 3 ) NULL,
+                  bill2contact VARCHAR( 3 ) NULL,
+                  tcsubject VARCHAR( 100 ) NULL,
+                  datespan VARCHAR( 100 ) NULL
+                  ) ENGINE = InnoDB;
+                  ]]></sql>
+		</table>
+		<table>
+			<name>sqlcomand</name>
+			<sql><![CDATA[
+                  INSERT INTO trcinvoicing (invoiceper,taxmode,tcgrouping,productdesc,invmodules,assignto,rel2contact,bill2contact,tcsubject,datespan) VALUES (0,0,0,0,'',1,0,0,'','thisweek');
+                  ]]></sql>
+		</table>
+	</tables>
+</schema>

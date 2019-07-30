@@ -17,7 +17,7 @@
  *  Author       : JPL TSolucio, S. L.
  *************************************************************************************************
 -->*}
-{include file='Buttons_List1.tpl'}
+{include file='Buttons_List1.tpl'}	
 
 <table border=0 cellspacing=0 cellpadding=0 width=95% align=center>
    <tr>

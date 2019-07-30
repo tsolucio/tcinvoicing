@@ -25,34 +25,48 @@
 {literal}
 <script type="text/javascript">
 function setSelect(state) {
-	var trows = document.InvoiceLines.totalrows.value;
-	for (var i=0;i<trows;i++) {
-		var obj = document.getElementById('il_'+i);
-		if (!obj.disabled) obj.checked=state;
-	}
+    var trows = document.InvoiceLines.totalrows.value;
+    for (var i=0;i<trows;i++) {
+        var obj = document.getElementById('il_'+i);
+        if (!obj.disabled) obj.checked=state;
+    }
 }
 function oneSelected() {
-	var trows = document.InvoiceLines.totalrows.value;
+	var inputs = document.InvoiceLines.getElementsByTagName("input"),
+		trows = [],
+		convertTo = this.form.convertto.value;
+	for (input in inputs) {
+		if (convertTo == "po" || convertTo == "ic") {
+			if (inputs[input].name !== undefined && /(il_)[0-9]{1,2}/.test(inputs[input].name)) {
+				trows.push(inputs[input])
+			}
+		} else {
+			if (inputs[input].name !== undefined && /(il_|retainer_|advance_)[0-9]{1,2}/.test(inputs[input].name)) {
+				trows.push(inputs[input])
+			}
+		}
+	}
 	var i=0;
 	var found = false;
-	while (i<trows && !found) {
-		var obj = document.getElementById('il_'+i);
-		i++;
-		found = obj.checked;
-	}
-	if (!found) {
-		alert(alert_arr.SELECT);
-	}
-	return found;
+    while (i<trows.length && !found) {
+       	found = trows[i].checked;
+       	i++;
+    }
+    if (!found) alert(alert_arr.SELECT);
+    return found;
 }
-function showHideStatus(sId,anchorImgId,sImagePath) {
+function showHideStatus(sId,anchorImgId,sImagePath)
+{
 	oObj = eval(document.getElementById(sId));
-	if (oObj.style.display == 'block') {
+	if(oObj.style.display == 'block')
+	{
 		oObj.style.display = 'none';
 		eval(document.getElementById(anchorImgId)).src =  'themes/images/inactivate.gif';
 		eval(document.getElementById(anchorImgId)).alt = 'Display';
 		eval(document.getElementById(anchorImgId)).title = 'Display';
-	} else {
+	}
+	else
+	{
 		oObj.style.display = 'block';
 		eval(document.getElementById(anchorImgId)).src = 'themes/images/activate.gif';
 		eval(document.getElementById(anchorImgId)).alt = 'Hide';
@@ -69,7 +83,7 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 </style>
 {/literal}
 
-{include file='Buttons_List1.tpl'}
+{include file='Buttons_List1.tpl'}	
 
 <form name="EditView" method="POST" action="index.php">
 <input type="hidden" name="module" value="{$MODULE}">
@@ -365,11 +379,14 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 <input type="hidden" name="convertto" value="so">
 <input type="hidden" name="parenttab" value="{$CATEGORY}">
 <input type="hidden" name="totalrows" value="{$totalrows}">
+<input type="hidden" name="totalretainers" value="{$tarecords.retainers|@count}">
+<input type="hidden" name="totaladvances" value="{$tarecords.advances|@count}">
+<input type="hidden" name="tcinv_origin" value="{$tcinv_origin}">
 {*<!-- Account details tabs -->*}
-<table border=0 cellspacing=0 cellpadding=0 width=95% align=center>
+<table border=0 cellspacing="30%" cellpadding=0 width=97% align=left>
    <tr>
 	<td valign=top align=left >
-		<table border=0 cellspacing=0 cellpadding=3 width=100% class="dvtContentSpace">
+		<table border=0 cellspacing=0 cellpadding=3 width=100% class="dvtContentSpace" style="border: none;">
 		   <tr>
 
 			<td align=left>
@@ -383,6 +400,7 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 					<td style="padding:10px">
 						<!-- General details -->
 						<table border=0 cellspacing=0 cellpadding=0 width=100% class="small">
+							{if count($tcts) > 0}
 					      <tr>
 							<td class="detailedViewHeader"><b>{$APP.LBL_START_DATE}</b></td>
 							<td class="detailedViewHeader"><b>{$MOD.Entity}</b></td>
@@ -394,13 +412,72 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 						  {foreach key=row item=values from=$tcts}
 						  <tr bgcolor="{if $values.invoiced}{$ILcolor}{else}{$nonILcolor}{/if}">
 							<td class="dvtCellLabel"><b>{$values.fecha}</b></td>
-							<td class="dvtCellInfo">{if isset($values.relmod)}{$values.relmod|@getTranslatedString:$values.relmod}{/if}</td>
-							<td class="dvtCellInfo">{if isset($values.relmod)}<a href="index.php?module={$values.relmod}&action=DetailView&record={$values.cuentaid}">{$values.cuenta}</a>{/if}</td>
+							<td class="dvtCellInfo">{$values.relmod|@getTranslatedString}</td>
+							<td class="dvtCellInfo"><a href="index.php?module={$values.relmod}&action=DetailView&record={$values.cuentaid}">{$values.cuenta}</a></td>
 							<td class="dvtCellInfo">{$values.usuario}</td>
 							<td class="dvtCellInfo"><input name="il_{$row}" id="il_{$row}" type="checkbox" value="{$values.tctsid}" {if !$values.invoiceable}disabled=true{/if}>&nbsp;<a href="index.php?module=Timecontrol&action=DetailView&record={$values.tctsid}">{$values.timeelement}</a></td>
-							<td class="dvtCellInfo">{if isset($values.pdomod)}<a href="index.php?module={$values.pdomod}&action=DetailView&record={$values.productid}">{$values.product}</a>{/if}</td>
+							<td class="dvtCellInfo"><a href="index.php?module={$values.pdomod}&action=DetailView&record={$values.productid}">{$values.product}</a></td>
 						  </tr>
 						  {/foreach}
+						  {/if}
+						  {* Transactions *}
+						  <tr>
+						  	<td colspan="6" align="center">
+						  		<h4>{'Retainers'|@getTranslatedString:'TimecontrolInv'}</h4>
+						  	</td>
+						  </tr>
+						  <tr>
+						  	<td class="detailedViewHeader"><b>{'PaymentDate'|@getTranslatedString:'CobroPago'}</b></td>
+						  	<td class="detailedViewHeader"><b>{'Credit'|@getTranslatedString:'CobroPago'}</b></td>
+						  	<td class="detailedViewHeader"><b>{'Parent'|@getTranslatedString:'CobroPago'}</b></td>
+						  	<td class="detailedViewHeader"><b>{'Category'|@getTranslatedString:'CobroPago'}</b></td>
+						  	<td class="detailedViewHeader"><b>{'LBL_COBROPAGO_NAME'|@getTranslatedString:'CobroPago'}</b></td>
+						  	<td class="detailedViewHeader"><b>{'LBL_LIST_AMOUNT'|@getTranslatedString:'CobroPago'}</b></td>
+						  </tr>
+							{foreach from=$tarecords.retainers item=tarecord key=key name=name}
+							<tr bgcolor="{if $tarecord.settled}{$ILcolor}{else}{$nonILcolor}{/if}">
+								<td class="dvtCellInfo">{$tarecord.paymentdate_uf}</td>
+								<td class="dvtCellInfo">{if $tarecord.credit == '1'}{$APP.yes}{else}{$APP.no}{/if}</td>
+								<td class="dvtCellInfo">
+									<a href="index.php?module={$tarecord.parent_setype}&action=DetailView&record={$tarecord.parent_id}">{$tarecord.parentname}</a>
+								</td>
+								<td class="dvtCellInfo">{$tarecord.paymentcategory}</td>
+								<td class="dvtCellInfo">
+									<input name="retainer_{$key}" id="retainer_{$key}" type="checkbox" value="{$tarecord.cobropagoid}" {if $tarecord.settled}disabled=true{/if}>
+									<a href="index.php?module=CobroPago&action=DetailView&record={$tarecord.cobropagoid}">{$tarecord.reference}</a>
+								</td>
+								<td class="dvtCellInfo">{$tarecord.amount_uf}</td>
+							</tr>
+							{/foreach}
+							<tr>
+								<td colspan="6" align="center">
+									<h4>{'Advances'|@getTranslatedString:'TimecontrolInv'}</h4>
+								</td>
+							</tr>
+							<tr>
+								<td class="detailedViewHeader"><b>{'PaymentDate'|@getTranslatedString:'CobroPago'}</b></td>
+								<td class="detailedViewHeader"><b>{'Credit'|@getTranslatedString:'CobroPago'}</b></td>
+								<td class="detailedViewHeader"><b>{'Parent'|@getTranslatedString:'CobroPago'}</b></td>
+								<td class="detailedViewHeader"><b>{'Category'|@getTranslatedString:'CobroPago'}</b></td>
+								<td class="detailedViewHeader"><b>{'LBL_COBROPAGO_NAME'|@getTranslatedString:'CobroPago'}</b></td>
+								<td class="detailedViewHeader"><b>{'LBL_LIST_AMOUNT'|@getTranslatedString:'CobroPago'}</b></td>
+							</tr>
+							{foreach from=$tarecords.advances item=tarecord key=key name=name}
+							<tr bgcolor="{if $tarecord.settled}{$ILcolor}{else}{$nonILcolor}{/if}">
+								<td class="dvtCellInfo">{$tarecord.paymentdate_uf}</td>
+								<td class="dvtCellInfo">{if $tarecord.credit == '1'}{$APP.yes}{else}{$APP.no}{/if}</td>
+								<td class="dvtCellInfo">
+									<a href="index.php?module={$tarecord.parent_setype}&action=DetailView&record={$tarecord.parent_id}">{$tarecord.parentname}</a>
+								</td>
+								<td class="dvtCellInfo">{$tarecord.paymentcategory}</td>
+								<td class="dvtCellInfo">
+									<input name="advance_{$key}" id="advance_{$key}" type="checkbox" value="{$tarecord.cobropagoid}" {if $tarecord.settled}disabled=true{/if}>
+									<a href="index.php?module=CobroPago&action=DetailView&record={$tarecord.cobropagoid}">{$tarecord.reference}</a>
+								</td>
+								<td class="dvtCellInfo">{$tarecord.amount_uf}</td>
+							</tr>
+							{/foreach}
+							{* END Transactions *}
 						   <tr>
 							<td  colspan=6 style="padding:5px">
 								<div align="center">
