@@ -572,22 +572,27 @@ if (count($tcts)>0) {
 				$focus->column_fields['related_to'] = isset($_REQUEST['tcinv_origin']) ? $_REQUEST['tcinv_origin'] : '';
 			}
 			$focus->save($convertto);
-			if ($convertto=="Issuecards" && $focus->id > 0) {
-				$relhelpdesk=$adb->pquery("select distinct relatedto,vtiger_troubletickets.soid
-		from vtiger_timecontrol
-		inner join vtiger_troubletickets on vtiger_troubletickets.ticketid=vtiger_timecontrol.relatedto 
-		where timecontrolid in ($setoftrc)", array());
-				$hd=$adb->fetch_array($relhelpdesk);
-				//Guardo el parte y el contrato que generan este albarán.
-				$adb->pquery(
-					"UPDATE vtiger_issuecards SET iss_ticketid = ?, iss_soid = ? WHERE issuecardid = ?",
-					array($hd['relatedto'],$hd['soid'],$focus->id)
+			if ($convertto=='Issuecards' && $focus->id > 0) {
+				$relhelpdesk=$adb->pquery(
+					"select distinct relatedto,vtiger_troubletickets.soid
+					from vtiger_timecontrol
+					inner join vtiger_troubletickets on vtiger_troubletickets.ticketid=vtiger_timecontrol.relatedto 
+					where timecontrolid in ($setoftrc)",
+					array()
 				);
-				//Marco el Parte como pasado a albarán.
-				$adb->pquery(
-					"UPDATE vtiger_troubletickets SET pasado_a_albaran = ? WHERE ticketid = ?",
-					array('1',$hd['relatedto'])
-				);
+				if ($adb->num_rows($relhelpdesk) > 0) {
+					$hd=$adb->fetch_array($relhelpdesk);
+					//Guardo el parte y el contrato que generan este albarán.
+					$adb->pquery(
+						'UPDATE vtiger_issuecards SET iss_ticketid=?, iss_soid=? WHERE issuecardid=?',
+						array($hd['relatedto'], $hd['soid'], $focus->id)
+					);
+					//Marco el Parte como pasado a albarán.
+					$adb->pquery(
+						'UPDATE vtiger_troubletickets SET pasado_a_albaran=? WHERE ticketid=?',
+						array('1', $hd['relatedto'])
+					);
+				}
 			}
 			$query = "SELECT tc.timecontrolid $qcond";
 			$res = $adb->query($query);
