@@ -78,17 +78,13 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 <input type="hidden" name="action" value="index">
 <input type="hidden" name="parenttab" value="{$CATEGORY}">
 {*<!-- Contents -->*}
-<table border=0 cellspacing=0 cellpadding=0 width=98% align=center>
+<table style="border:0;width:98%;margin:auto;">
    <tr>
 	<td valign=top><img src="{'showPanelTopLeft.gif'|@vtiger_imageurl:$THEME}"></td>
 
 	<td class="showPanelBg" valign=top width=100%>
 		{*<!-- PUBLIC CONTENTS STARTS-->*}
 		<div class="small" style="padding:20px">
-			<span class="lvtHeaderText">{$MOD.ProcessTitle}</span> <br>
-			<hr noshade size=1>
-			<br> 
-{*<!-- Account details tabs -->*}
 <table border=0 cellspacing=0 cellpadding=0 width=95% align=center>
    <tr>
 	<td valign=top align=left >
@@ -382,15 +378,18 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 				   <tr>
 					<td style="padding:10px">
 						<!-- General details -->
-						<table border=0 cellspacing=0 cellpadding=0 width=100% class="small">
+						<table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:98%;margin:auto;">
+						<thead>
 					      <tr>
-							<td class="detailedViewHeader"><b>{$APP.LBL_START_DATE}</b></td>
-							<td class="detailedViewHeader"><b>{$MOD.Entity}</b></td>
-							<td class="detailedViewHeader"><b>{$MOD.RelatedTo}</b></td>
-							<td class="detailedViewHeader"><b>{$APP.SINGLE_Users}</b></td>
-							<td class="detailedViewHeader"><b><input name="il_all" type="checkbox" onclick='setSelect(this.checked)'>&nbsp;{$MOD.Timecontrol}</b></td>
-							<td class="detailedViewHeader"><b>{$APP.SINGLE_Products}</b></td>
+							<th class="detailedViewHeader"><b>{$APP.LBL_START_DATE}</b></th>
+							<th class="detailedViewHeader"><b>{$MOD.Entity}</b></th>
+							<th class="detailedViewHeader"><b>{$MOD.RelatedTo}</b></th>
+							<th class="detailedViewHeader"><b>{$APP.SINGLE_Users}</b></th>
+							<th class="detailedViewHeader"><b><input name="il_all" type="checkbox" onclick='setSelect(this.checked)'>&nbsp;{$MOD.Timecontrol}</b></th>
+							<th class="detailedViewHeader"><b>{$APP.SINGLE_Products}</b></th>
 						  </tr>
+						</thead>
+						<tbody>
 						  {foreach key=row item=values from=$tcts}
 						  <tr bgcolor="{if $values.invoiced}{$ILcolor}{else}{$nonILcolor}{/if}">
 							<td class="dvtCellLabel"><b>{$values.fecha}</b></td>
@@ -424,6 +423,7 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 								</div>
 							</td>
 						   </tr>
+						</tbody>
 						</table>
 					</td>
 				   </tr>
