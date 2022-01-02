@@ -355,7 +355,7 @@ while ($result && ($row = $adb->fetch_array($result))) {
 		$data['product'] = $prod[$row['product_id']];
 	}
 	if ($row['relatedto']) {
-		$isdel=$adb->getone('select deleted from vtiger_crmentity where crmid='.$row['relatedto']);
+		$isdel=$adb->getone('select deleted from vtiger_crmobject where crmid='.$row['relatedto']);
 		if ($isdel) {
 			$ename='<font color=red>DELETED!!!</font>';
 		} else {

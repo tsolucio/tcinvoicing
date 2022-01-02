@@ -121,20 +121,20 @@ if (count($tcts)>0) {
 			$focus->column_fields['ship_country'] = decode_html($vnd_focus->column_fields['country']);
 			$focus->mode = ''; // Creating
 			// Lines
+			$crmEntityTable = CRMEntity::getcrmEntityTableAlias('Timecontrol');
 			$qcond = "FROM vtiger_timecontrol tc ";
-			$qcond .= "INNER JOIN vtiger_crmentity ce ON tc.timecontrolid = ce.crmid ";
+			$qcond .= 'INNER JOIN '.$crmEntityTable.' ON tc.timecontrolid=vtiger_crmentity.crmid ';
 			$qcond .= "WHERE ce.deleted = 0 AND tc.timecontrolid in ($setoftrc) and tc.relatedto = $vendorid ";
 
 			switch ($tcgrouping) {
 				case 0: // None. Each TRC will be an individual product line
-					$qtcond = "SELECT tc.product_id, time_to_sec(totaltime) as wtsecs, tcunits as totalunits, ce.description, date_start $qcond";
+					$qtcond = "SELECT tc.product_id, time_to_sec(totaltime) as wtsecs, tcunits as totalunits, vtiger_crmentity.description, date_start $qcond";
 					break;
 				case 1: // Product. Group TRC by product summing time and units for each individual product line
 					$qtcond = "SELECT tc.product_id, sum(time_to_sec(totaltime)) as wtsecs, sum(tcunits) as totalunits $qcond group by tc.product_id";
 					break;
 				case 2: // RelatedEntity. Group TRC by related entity AND product summing time and units for each individual product line
-					$qtcond = "SELECT tc.relatedto,tc.product_id, sum(time_to_sec(totaltime)) as wtsecs, sum(tcunits) as totalunits $qcond
-						group by tc.relatedto,tc.product_id";
+					$qtcond = "SELECT tc.relatedto,tc.product_id, sum(time_to_sec(totaltime)) as wtsecs, sum(tcunits) as totalunits $qcond group by tc.relatedto,tc.product_id";
 					break;
 			}
 

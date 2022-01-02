@@ -14,13 +14,18 @@ class TimecontrolInv extends CRMEntity {
 	public $moduleIcon = array('library' => 'standard', 'containerClass' => 'slds-icon_container slds-icon-standard-account', 'class' => 'slds-icon', 'icon'=>'timesheet_entry');
 
 	/**
+	 * Mandatory for Saving, Include tables related to this module.
+	 */
+	public $tab_name = array();
+
+	/**
 	 * Invoked when special actions are performed on the module.
-	 * @param String Module name
-	 * @param String Event Type (module.postinstall, module.disabled, module.enabled, module.preuninstall)
+	 * @param string Module name
+	 * @param string Event Type (module.postinstall, module.disabled, module.enabled, module.preuninstall)
 	 */
 	public function vtlib_handler($modulename, $event_type) {
 		if ($event_type == 'module.postinstall') {
-			// TODO Handle post installation actions
+			// Handle post installation actions
 			global $adb;
 			$module = Vtiger_Module::getInstance('Contacts');
 			if ($module) {
@@ -55,15 +60,15 @@ class TimecontrolInv extends CRMEntity {
 			}
 			$adb->query("update vtiger_relatedlists set actions='' where tabid=".$module->id." and related_tabid=".$invoiceModule->id." and label='Invoiced on'");
 		} elseif ($event_type == 'module.disabled') {
-			// TODO Handle actions when this module is disabled.
+			// Handle actions when this module is disabled.
 		} elseif ($event_type == 'module.enabled') {
-			// TODO Handle actions when this module is enabled.
+			// Handle actions when this module is enabled.
 		} elseif ($event_type == 'module.preuninstall') {
-			// TODO Handle actions when this module is about to be deleted.
+			// Handle actions when this module is about to be deleted.
 		} elseif ($event_type == 'module.preupdate') {
-			// TODO Handle actions before this module is updated.
+			// Handle actions before this module is updated.
 		} elseif ($event_type == 'module.postupdate') {
-			// TODO Handle actions after this module is updated.
+			// Handle actions after this module is updated.
 		}
 	}
 }
