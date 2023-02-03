@@ -127,9 +127,6 @@ $invModules=  array (
 $smarty->assign('invModules', $invModules);
 $smarty->assign('invMSelect', $toinvoice);
 
-$_REQUEST['invoiced'] = (int)GlobalVariable::getVariable('TCInv_Default_Invoiced_State', 2);
-$_REQUEST['showinvoiceable'] = (int)GlobalVariable::getVariable('TCInv_Default_Show_Invoiceable', 0);
-
 $startdate = isset($_REQUEST["start_date"]) ? $_REQUEST["start_date"] : '';
 $enddate = isset($_REQUEST["end_date"]) ? $_REQUEST["end_date"] : '';
 $userid = isset($_REQUEST["assigned_user_id"]) ? $_REQUEST["assigned_user_id"] : '0';  // default all
@@ -141,11 +138,11 @@ $smarty->assign('Contactselected', ($parent=='Contacts' ? 'selected' : ''));
 $smarty->assign('Vendorsselected', ($parent=='Vendors' ? 'selected' : ''));
 $smarty->assign('parentid', $parentid);
 $smarty->assign('parentid_display', $parent_display);
-$invoiced = isset($_REQUEST["invoiced"]) ? $_REQUEST["invoiced"] : 2;  // By default both=2
+$invoiced = isset($_REQUEST['invoiced']) ? $_REQUEST['invoiced'] : (int)GlobalVariable::getVariable('TCInv_Default_Invoiced_State', 2);
 $smarty->assign('selnotinvoiced', ($invoiced==0 ? 'selected' : ''));
 $smarty->assign('selinvoiced', ($invoiced==1 ? 'selected' : ''));
 $smarty->assign('selbothinvoiced', ($invoiced==2 ? 'selected' : ''));
-$showinvchecked = empty($_REQUEST["showinvoiceable"]) ? 0 : 1;
+$showinvchecked = isset($_REQUEST['showinvoiceable']) ? $_REQUEST['showinvoiceable'] : (int)GlobalVariable::getVariable('TCInv_Default_Show_Invoiceable', 0);
 $smarty->assign('showinvchecked', ($showinvchecked!=0 ? 'checked' : ''));
 
 $starttime = 0;
