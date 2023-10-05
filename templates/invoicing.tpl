@@ -76,7 +76,6 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 <input type="hidden" name="record" value="{$ID}">
 <input type="hidden" name="mode" value="{$MODE}">
 <input type="hidden" name="action" value="index">
-<input type="hidden" name="parenttab" value="{$CATEGORY}">
 {*<!-- Contents -->*}
 <table style="border:0;width:98%;margin:auto;">
    <tr>
