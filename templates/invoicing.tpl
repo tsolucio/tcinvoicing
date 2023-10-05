@@ -358,7 +358,6 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 <input type="hidden" name="mode" value="{$MODE}">
 <input type="hidden" name="action" value="convertTo">
 <input type="hidden" name="convertto" value="so">
-<input type="hidden" name="parenttab" value="{$CATEGORY}">
 <input type="hidden" name="totalrows" value="{$totalrows}">
 {*<!-- Account details tabs -->*}
 <table border=0 cellspacing=0 cellpadding=0 width=95% align=center>
