@@ -49,14 +49,18 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 	oObj = eval(document.getElementById(sId));
 	if (oObj.style.display == 'block') {
 		oObj.style.display = 'none';
-		eval(document.getElementById(anchorImgId)).src =  'themes/images/inactivate.gif';
-		eval(document.getElementById(anchorImgId)).alt = 'Display';
-		eval(document.getElementById(anchorImgId)).title = 'Display';
+		document.getElementById(anchorImgId).src = 'themes/images/inactivate.gif';
+		{/literal}
+		document.getElementById(anchorImgId).alt = '{$APP.LBL_SHOW}';
+		document.getElementById(anchorImgId).title = '{$APP.LBL_SHOW}';
+		{literal}
 	} else {
 		oObj.style.display = 'block';
-		eval(document.getElementById(anchorImgId)).src = 'themes/images/activate.gif';
-		eval(document.getElementById(anchorImgId)).alt = 'Hide';
-		eval(document.getElementById(anchorImgId)).title = 'Hide';
+		document.getElementById(anchorImgId).src = 'themes/images/activate.gif';
+		{/literal}
+		document.getElementById(anchorImgId).alt = '{$APP.LBL_HIDE}';
+		document.getElementById(anchorImgId).title = '{$APP.LBL_HIDE}';
+		{literal}
 	}
 }
 </script>
@@ -76,50 +80,48 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 <input type="hidden" name="record" value="{$ID}">
 <input type="hidden" name="mode" value="{$MODE}">
 <input type="hidden" name="action" value="index">
-{*<!-- Contents -->*}
 <table style="border:0;width:98%;margin:auto;">
-   <tr>
-	<td valign=top><img src="{'showPanelTopLeft.gif'|@vtiger_imageurl:$THEME}"></td>
-
+<tr>
+	<td valign=top><img src="{vtiger_imageurl('showPanelTopLeft.gif', $THEME)}"></td>
 	<td class="showPanelBg" valign=top width=100%>
-		{*<!-- PUBLIC CONTENTS STARTS-->*}
 		<div class="small" style="padding:20px">
 <table border=0 cellspacing=0 cellpadding=0 width=95% align=center>
-   <tr>
+<tr>
 	<td valign=top align=left >
 		<table border=0 cellspacing=0 cellpadding=3 width=100% class="dvtContentSpace">
-		   <tr>
-
+		<tr>
 			<td align=left>
-				{*<!-- content cache -->*}
-		
 				<table border=0 cellspacing=0 cellpadding=0 width=100%>
-				   <tr>
+				<tr>
 					<td id ="autocom"></td>
-				   </tr>
-				   <tr>
+				</tr>
+				<tr>
 					<td style="padding:10px">
 						{assign var=tcheadtext value=$MOD.tcparams|replace:' ':''}
 						<table border=0 cellspacing=0 cellpadding=0 width=100% class="small">
-					      <tr>{strip}
-						     <td colspan=4 class="dvInnerHeader">
-							<div style="float:left;font-weight:bold;"><div style="float:left;"><a href="javascript:showHideStatus('tbl{$tcheadtext}','aid{$tcheadtext}','{$IMAGE_PATH}');">
-								<img id="aid{$tcheadtext}" src="{'activate.gif'|@vtiger_imageurl:$THEME}" style="border: 0px solid #000000;" alt="Hide" title="Hide"/>
-								</a></div><b>&nbsp;
-						        	{$MOD.tcparams}
-	  			     			</b></div>
-						     </td>{/strip}
-						  </tr>
-				  </table>
+						<tr>{strip}
+							<td colspan=4 class="dvInnerHeader">
+								<div style="float:left;font-weight:bold;">
+									<div style="float:left;">
+										<a href="javascript:showHideStatus('tbl{$tcheadtext}','aid{$tcheadtext}','{$IMAGE_PATH}');">
+											<img id="aid{$tcheadtext}" src="{vtiger_imageurl('activate.gif', $THEME)}" style="border: 0px solid #000000;"
+												alt="Hide" title="Hide"/>
+										</a>
+									</div>
+									<b>&nbsp;{$MOD.tcparams}</b>
+								</div>
+							</td>{/strip}
+						</tr>
+						</table>
 		<div style="width:auto;display:block;" id="tbl{$tcheadtext}" >
-		  <table border=0 cellspacing=0 cellpadding=0 width="100%" class="small">
-	      <tr>
+		<table border=0 cellspacing=0 cellpadding=0 width="100%" class="small">
+		<tr>
 			<td width="20%" class="dvtCellLabel" align=right>
-				<font color="red">*</font>{$APP.LBL_START_DATE}
+				<span style="color:red;">*</span>{$APP.LBL_START_DATE}
 			</td>
 			<td width="30%" align=left class="dvtCellInfo">
 				<input name="start_date" tabindex="5" id="jscal_field_start_date" type="text" style="border:1px solid #bababa;" size="11" maxlength="10" value="{$start_date_val}">
-				<img src="{'btnL3Calendar.gif'|@vtiger_imageurl:$THEME}" id="jscal_trigger_start_date">
+				<img src="{vtiger_imageurl('btnL3Calendar.gif', $THEME)}" id="jscal_trigger_start_date">
 				<br><font size=1><em old="(yyyy-mm-dd)">({$dateStr})</em></font>
 				<script type="text/javascript" id='massedit_calendar_start_date'>
 					Calendar.setup ({ldelim}
@@ -139,14 +141,14 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 				{/foreach}
 				</select>
 			</td>
-		  </tr>
-	      <tr>
+		</tr>
+		<tr>
 			<td width="20%" class="dvtCellLabel" align=right>
-				<font color="red">*</font>{$APP.LBL_END_DATE}
+				<span style="color:red;">*</span>{$APP.LBL_END_DATE}
 			</td>
 			<td width="30%" align=left class="dvtCellInfo">
 				<input name="end_date" tabindex="15" id="jscal_field_end_date" type="text" style="border:1px solid #bababa;" size="11" maxlength="10" value="{$end_date_val}">
-				<img src="{'btnL3Calendar.gif'|@vtiger_imageurl:$THEME}" id="jscal_trigger_end_date">
+				<img src="{vtiger_imageurl('btnL3Calendar.gif', $THEME)}" id="jscal_trigger_end_date">
 				<br><font size=1><em old="(yyyy-mm-dd)">({$dateStr})</em></font>
 				<script type="text/javascript" id='massedit_calendar_end_date'>
 					Calendar.setup ({ldelim}
@@ -164,11 +166,14 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 			<td width="30%" align=left class="dvtCellInfo">
 				<input name="parentid" value="{$parentid}" id="parentid" type="hidden">
 				<input name="parentid_display" id="parentid_display" readonly="readonly" style="border: 1px solid rgb(186, 186, 186);" value="{$parentid_display}" type="text">&nbsp;
-				<img src="{'select.gif'|@vtiger_imageurl:$THEME}" tabindex="20" alt="Select" title="Select" onclick='return window.open("index.php?module="+document.EditView.parentid_type.value+"&action=Popup&html=Popup_picker&form=vtlibPopupView&forfield=parentid","test","width=640,height=602,resizable=0,scrollbars=0,top=150,left=200");' style="cursor: pointer;" align="absmiddle">&nbsp;
-				<input src="{'clear_field.gif'|@vtiger_imageurl:$THEME}" alt="Clear" title="Clear" onclick="this.form.parentid.value=''; this.form.parentid_display.value=''; return false;" style="cursor: pointer;" align="absmiddle" type="image">
+				<img src="{vtiger_imageurl('select.gif', $THEME)}" tabindex="20" alt="{'LBL_SELECT_MODULE'|@getTranslatedString:'Settings'}"
+					title="{'LBL_SELECT_MODULE'|@getTranslatedString:'Settings'}" style="cursor: pointer;" align="absmiddle"
+					onclick='return window.open("index.php?module="+document.EditView.parentid_type.value+"&action=Popup&html=Popup_picker&form=vtlibPopupView&forfield=parentid","test","width=640,height=602,resizable=0,scrollbars=0,top=150,left=200");'>&nbsp;
+				<input src="{vtiger_imageurl('clear_field.gif', $THEME)}" alt="{'LBL_CLEAR'|@getTranslatedString}" title="{'LBL_CLEAR'|@getTranslatedString}"
+					onclick="this.form.parentid.value=''; this.form.parentid_display.value=''; return false;" style="cursor: pointer;" align="absmiddle" type="image">
 			</td>
-		  </tr>
-	      <tr>
+		</tr>
+		<tr>
 			<td width="20%" class="dvtCellLabel" align=right>
 				{$MOD.Invoiced}
 			</td>
@@ -180,37 +185,42 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 				</select>
 			</td>
 			<td width="20%" class="dvtCellLabel" align=right>
-			   {$MOD.ShowInvoiceable}
+				{$MOD.ShowInvoiceable}
 			</td>
 			<td width="30%" align=left class="dvtCellInfo">
 			<INPUT TYPE=CHECKBOX NAME="showinvoiceable" {$showinvchecked}>
 			</td>
-		  </tr>
-									   <tr>
-										<td  colspan=4 style="padding:5px">
-											<div align="center">
-			                                	<input title="{$APP.LBL_SEARCH_BUTTON_TITLE}" accessKey="{$APP.LBL_SEARCH_BUTTON_KEY}" class="crmbutton small save" type="submit" name="button" value="  {$APP.LBL_SEARCH_BUTTON_LABEL}  " style="width:70px" >
-											</div>
+		</tr>
+									<tr>
+									<td colspan=4 style="padding:5px">
+										<div align="center">
+											<input title="{$APP.LBL_SEARCH_BUTTON_TITLE}" accessKey="{$APP.LBL_SEARCH_BUTTON_KEY}" class="crmbutton small save"
+												type="submit" name="button" value="  {$APP.LBL_SEARCH_BUTTON_LABEL}  ">
+										</div>
 										</td>
-									   </tr>
+									</tr>
 									</table>
 								</div>
 						{assign var=ivheadtext value=$MOD.invoiceparams|replace:' ':''}
 						<table border=0 cellspacing=0 cellpadding=0 width=100% class="small">
-						  <tr><td colspan=4>&nbsp;</td></tr>
-					      <tr>{strip}
-						     <td colspan=4 class="dvInnerHeader">
-							<div style="float:left;font-weight:bold;"><div style="float:left;"><a href="javascript:showHideStatus('tbl{$ivheadtext}','aid{$ivheadtext}','{$IMAGE_PATH}');">
-							<img id="aid{$ivheadtext}" src="{'inactivate.gif'|@vtiger_imageurl:$THEME}" style="border: 0px solid #000000;" alt="Display" title="Display"/>
-								</a></div><b>&nbsp;
-						        	{$MOD.invoiceparams}
-	  			     			</b></div>
-						     </td>{/strip}
-						  </tr>
-				  </table>
+						<tr><td colspan=4>&nbsp;</td></tr>
+						<tr>{strip}
+							<td colspan=4 class="dvInnerHeader">
+							<div style="float:left;font-weight:bold;">
+								<div style="float:left;">
+									<a href="javascript:showHideStatus('tbl{$ivheadtext}','aid{$ivheadtext}','{$IMAGE_PATH}');">
+										<img id="aid{$ivheadtext}" src="{vtiger_imageurl('inactivate.gif', $THEME)}" style="border: 0px solid #000000;"
+											alt="{$APP.LBL_SHOW}" title="{$APP.LBL_SHOW}"/>
+									</a>
+								</div>
+								<b>&nbsp;{$MOD.invoiceparams}</b>
+							</div>
+							</td>{/strip}
+						</tr>
+						</table>
 		<div style="width:auto;display:none;" id="tbl{$ivheadtext}" >
-		  <table border=0 cellspacing=0 cellpadding=0 width="100%" class="small">
-	      <tr>
+		<table border=0 cellspacing=0 cellpadding=0 width="100%" class="small">
+		<tr>
 			<td width="20%" class="dvtCellLabel" align=right>
 				{$MOD.Invoiceper}
 			</td>
@@ -231,8 +241,8 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 					<option value="2" {$seltcgrpre}>{$MOD.tcGrpRE}</option>
 				</select>
 			</td>
-		  </tr>
-	      <tr>
+		</tr>
+		<tr>
 			<td width="20%" class="dvtCellLabel" align=right>
 				{$APP.LBL_TAX_MODE}
 			</td>
@@ -252,8 +262,8 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 					<option value="2" {$selpdodre}>{$MOD.pdoDescRE}</option>
 				</select>
 			</td>
-		  </tr>
-	      <tr>
+		</tr>
+		<tr>
 			<td width="20%" class="dvtCellLabel" align=right>
 				{$MOD.EntitiesInvoiced}
 			</td>
@@ -263,7 +273,7 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 				</select>
 			</td>
 			<td width="20%" class="dvtCellLabel" align=right>
-			  {$MOD.AssignInvoiceTo}
+				{$MOD.AssignInvoiceTo}
 			</td>
 			<td width="30%" align=left class="dvtCellInfo">
 				<select name="assignto" class="small" tabindex="10">
@@ -274,46 +284,44 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 				{/foreach}
 				</select>
 			</td>
-		  </tr>
-	      {if $rel2contact neq 'no' && $bill2contact neq 'no'}
-	      <tr>
+		</tr>
+		{if $rel2contact neq 'no' && $bill2contact neq 'no'}
+		<tr>
 		<td width="20%" class="dvtCellLabel" align=right>
-			   {$MOD.rel2contact}
+			{$MOD.rel2contact}
 		</td>
 		<td width="30%" align=left class="dvtCellInfo">
 			<INPUT TYPE=CHECKBOX NAME="rel2contact" {$rel2contact}>
 		</td>
 		<td width="20%" class="dvtCellLabel" align=right>
-			   {$MOD.bill2contact}
+			{$MOD.bill2contact}
 		</td>
 		<td width="30%" align=left class="dvtCellInfo">
 			<INPUT TYPE=CHECKBOX NAME="bill2contact" {$bill2contact}>
 		</td>
-		
-	      </tr>
-	      {else}
-	      <tr>
+		</tr>
+		{else}
+		<tr>
+			<td width="20%" class="dvtCellLabel" align=right>
+				{$MOD.rel2contact}
+			</td>
+			<td width="30%" align=left class="dvtCellInfo">
+				<INPUT TYPE=CHECKBOX readonly="readonly" NAME="rel2contact" {$rel2contact}>
+			</td>
+			<td width="20%" class="dvtCellLabel" align=right>
+				{$MOD.bill2contact}
+			</td>
+			<td width="30%" align=left class="dvtCellInfo">
+				<INPUT TYPE=CHECKBOX readonly="readonly" NAME="bill2contact" {$bill2contact}>
+			</td>
+		</tr>
+		{/if}
+		<tr>
 		<td width="20%" class="dvtCellLabel" align=right>
-			   {$MOD.rel2contact}
+			{$MOD.tcsubject}
 		</td>
 		<td width="30%" align=left class="dvtCellInfo">
-			<INPUT TYPE=CHECKBOX readonly="readonly" NAME="rel2contact" {$rel2contact}>
-		</td>
-		<td width="20%" class="dvtCellLabel" align=right>
-			   {$MOD.bill2contact}
-		</td>
-		<td width="30%" align=left class="dvtCellInfo">
-			<INPUT TYPE=CHECKBOX readonly="readonly" NAME="bill2contact" {$bill2contact}>
-		</td>
-		
-	      </tr>
-              {/if}
-	      <tr>
-		<td width="20%" class="dvtCellLabel" align=right>
-			   {$MOD.tcsubject}
-		</td>
-		<td width="30%" align=left class="dvtCellInfo">
-		    <input name="tcsubject" id="tcsubject" style="border: 1px solid rgb(186, 186, 186);" value="{$tcsubject}" type="text">
+			<input name="tcsubject" id="tcsubject" style="border: 1px solid rgb(186, 186, 186);" value="{$tcsubject}" type="text">
 		</td>
 		<td width="20%" class="dvtCellLabel" align=right>
 			{'Simple_Time_Filter'|@getTranslatedString:'CustomView'}
@@ -327,28 +335,21 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 			</select>
 		</td>
 	      </tr>
-		  <!-- tr>
-			<td  colspan=4 style="padding:5px">
-			 <div align="center">
-               <input title="{$APP.LBL_UPDATE}" accessKey="U" class="crmbutton small save" type="submit" name="button" value="  {$APP.LBL_UPDATE}  " style="width:70px" >
-			 </div>
-			</td>
-		  </tr -->
 		  </table>
-		  </div>
+		</div>
 								</td>
-							   </tr>
+							</tr>
 							</table>
 						</td>
-					   </tr>
+					</tr>
 					</table>
 				</td>
-			   </tr>
+			</tr>
 			</table>
 		</div>
 	</td>
-	<td align=right valign=top><img src="{'showPanelTopRight.gif'|@vtiger_imageurl:$THEME}"></td>
-   </tr>
+	<td align=right valign=top><img src="{vtiger_imageurl('showPanelTopRight.gif', $THEME)}"></td>
+</tr>
 </table>
 </form>
 
@@ -361,75 +362,83 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 <input type="hidden" name="totalrows" value="{$totalrows}">
 {*<!-- Account details tabs -->*}
 <table border=0 cellspacing=0 cellpadding=0 width=95% align=center>
-   <tr>
+<tr>
 	<td valign=top align=left >
 		<table border=0 cellspacing=0 cellpadding=3 width=100% class="dvtContentSpace">
-		   <tr>
-
+		<tr>
 			<td align=left>
-				{*<!-- content cache -->*}
-		
 				<table border=0 cellspacing=0 cellpadding=0 width=100%>
-				   <tr>
+				<tr>
 					<td id ="autocom"></td>
-				   </tr>
-				   <tr>
+				</tr>
+				<tr>
 					<td style="padding:10px">
 						<!-- General details -->
 						<table class="slds-table slds-table_cell-buffer slds-table_bordered" style="width:98%;margin:auto;">
 						<thead>
-					      <tr>
+						<tr>
 							<th class="detailedViewHeader"><b>{$APP.LBL_START_DATE}</b></th>
 							<th class="detailedViewHeader"><b>{$MOD.Entity}</b></th>
 							<th class="detailedViewHeader"><b>{$MOD.RelatedTo}</b></th>
 							<th class="detailedViewHeader"><b>{$APP.SINGLE_Users}</b></th>
 							<th class="detailedViewHeader"><b><input name="il_all" type="checkbox" onclick='setSelect(this.checked)'>&nbsp;{$MOD.Timecontrol}</b></th>
 							<th class="detailedViewHeader"><b>{$APP.SINGLE_Products}</b></th>
-						  </tr>
+						</tr>
 						</thead>
 						<tbody>
-						  {foreach key=row item=values from=$tcts}
-						  <tr bgcolor="{if $values.invoiced}{$ILcolor}{else}{$nonILcolor}{/if}">
+						{foreach key=row item=values from=$tcts}
+						<tr bgcolor="{if $values.invoiced}{$ILcolor}{else}{$nonILcolor}{/if}">
 							<td class="dvtCellLabel"><b>{$values.fecha}</b></td>
 							<td class="dvtCellInfo">{if isset($values.relmod)}{$values.relmod|@getTranslatedString:$values.relmod}{/if}</td>
-							<td class="dvtCellInfo">{if isset($values.relmod)}<a href="index.php?module={$values.relmod}&action=DetailView&record={$values.cuentaid}">{$values.cuenta}</a>{/if}</td>
+							<td class="dvtCellInfo">
+								{if isset($values.relmod)}<a href="index.php?module={$values.relmod}&action=DetailView&record={$values.cuentaid}">{$values.cuenta}</a>{/if}
+							</td>
 							<td class="dvtCellInfo">{$values.usuario}</td>
-							<td class="dvtCellInfo"><input name="il_{$row}" id="il_{$row}" type="checkbox" value="{$values.tctsid}" {if !$values.invoiceable}disabled=true{/if}>&nbsp;<a href="index.php?module=Timecontrol&action=DetailView&record={$values.tctsid}">{$values.timeelement}</a></td>
-							<td class="dvtCellInfo">{if isset($values.pdomod)}<a href="index.php?module={$values.pdomod}&action=DetailView&record={$values.productid}">{$values.product}</a>{/if}</td>
-						  </tr>
-						  {/foreach}
-						   <tr>
-							<td  colspan=6 style="padding:5px">
+							<td class="dvtCellInfo">
+								<input name="il_{$row}" id="il_{$row}" type="checkbox" value="{$values.tctsid}" {if !$values.invoiceable}disabled=true{/if}>&nbsp;
+								<a href="index.php?module=Timecontrol&action=DetailView&record={$values.tctsid}">{$values.timeelement}</a>
+							</td>
+							<td class="dvtCellInfo">
+								{if isset($values.pdomod)}<a href="index.php?module={$values.pdomod}&action=DetailView&record={$values.productid}">{$values.product}</a>{/if}
+							</td>
+						</tr>
+						{/foreach}
+						<tr>
+							<td colspan=6 style="padding:5px">
 								<div align="center">
-                                	<br>
-									{if 'SalesOrder'|vtlib_isModuleActive}
-                                	<input title="{$MOD.CONVERT_SALESORDER}" accessKey="S" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_SALESORDER}  " onclick="this.form.convertto.value='so'; return oneSelected();">
-                                	&nbsp;&nbsp;&nbsp;&nbsp;
+									<br>
+									{if vtlib_isModuleActive('SalesOrder')}
+									<input title="{$MOD.CONVERT_SALESORDER}" accessKey="S" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_SALESORDER}  "
+										onclick="this.form.convertto.value='so'; return oneSelected();">
+										&nbsp;&nbsp;&nbsp;&nbsp;
 									{/if}
-									{if 'Invoice'|vtlib_isModuleActive}
-                                	<input title="{$MOD.CONVERT_INVOICE}" accessKey="V" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_INVOICE}  " onclick="this.form.convertto.value='in'; return oneSelected();">
-									&nbsp;&nbsp;&nbsp;&nbsp;
+									{if vtlib_isModuleActive('Invoice')}
+									<input title="{$MOD.CONVERT_INVOICE}" accessKey="V" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_INVOICE}  "
+										onclick="this.form.convertto.value='in'; return oneSelected();">
+										&nbsp;&nbsp;&nbsp;&nbsp;
 									{/if}
-									{if 'PurchaseOrder'|vtlib_isModuleActive}
-									<input title="{$MOD.CONVERT_PURCHASEORDER}" accessKey="V" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_PURCHASEORDER}  " onclick="this.form.convertto.value='po'; return oneSelected();">
-									&nbsp;&nbsp;&nbsp;&nbsp;
+									{if vtlib_isModuleActive('PurchaseOrder')}
+									<input title="{$MOD.CONVERT_PURCHASEORDER}" accessKey="V" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_PURCHASEORDER}  "
+										onclick="this.form.convertto.value='po'; return oneSelected();">
+										&nbsp;&nbsp;&nbsp;&nbsp;
 									{/if}
-									{if 'Issuecards'|vtlib_isModuleActive}
-									<input title="{$MOD.CONVERT_ISSUECARDS}" accessKey="V" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_ISSUECARDS}  " onclick="this.form.convertto.value='ic'; return oneSelected();">
-									&nbsp;&nbsp;&nbsp;&nbsp;
+									{if vtlib_isModuleActive('Issuecards')}
+									<input title="{$MOD.CONVERT_ISSUECARDS}" accessKey="V" class="crmbutton small save" type="submit" name="button" value="  {$MOD.CONVERT_ISSUECARDS}  "
+										onclick="this.form.convertto.value='ic'; return oneSelected();">
+										&nbsp;&nbsp;&nbsp;&nbsp;
 									{/if}
 								</div>
 							</td>
-						   </tr>
+						</tr>
 						</tbody>
 						</table>
 					</td>
-				   </tr>
+				</tr>
 				</table>
 			</td>
-		   </tr>
+		</tr>
 		</table>
 	</td>
-   </tr>
+</tr>
 </table>
 </form>
