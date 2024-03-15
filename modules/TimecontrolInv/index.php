@@ -111,7 +111,7 @@ if (in_array('invoice_ref', $repcols)) {
 	$smarty->assign('rel2contact', 'no');
 	$smarty->assign('bill2contact', 'no');
 }
-$invModules=  array (
+$invModules=  array(
 	'Contacts' => getTranslatedString('Contacts', 'Contacts'),
 	'Accounts' => getTranslatedString('Accounts', 'Accounts'),
 	'Vendors' => getTranslatedString('Vendors', 'Vendors'),
