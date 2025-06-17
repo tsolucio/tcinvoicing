@@ -73,7 +73,7 @@ function showHideStatus(sId,anchorImgId,sImagePath) {
 </style>
 {/literal}
 
-{include file='Buttons_List1.tpl'}
+{include file='Buttons_List.tpl'}
 
 <form name="EditView" method="POST" action="index.php">
 <input type="hidden" name="module" value="{$MODULE}">

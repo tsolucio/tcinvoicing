@@ -17,7 +17,7 @@
  *  Author       : JPL TSolucio, S. L.
  *************************************************************************************************
 -->*}
-{include file='Buttons_List1.tpl'}
+{include file='Buttons_List.tpl'}
 
 <div class="slds-card slds-card__header" style="width:95%;margin:auto;">
 <header class="slds-media slds-media_center slds-has-flexi-truncate slds-m-bottom_small">
